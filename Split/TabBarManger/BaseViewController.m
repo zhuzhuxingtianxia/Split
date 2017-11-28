@@ -21,8 +21,12 @@
         BarViewController *rootVC = (BarViewController*)[UIApplication sharedApplication].keyWindow.rootViewController;
         rootVC.barView.hidden = NO;
         __weak typeof(BarViewController*) weakSelf = rootVC;
-        [self.navigationController.view mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(weakSelf.view).with.insets(UIEdgeInsetsMake(0, 120, 0, 0));
+        [UIView animateWithDuration:0.3 animations:^{
+            [self.navigationController.view mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.edges.equalTo(weakSelf.view).with.insets(UIEdgeInsetsMake(0, 120, 0, 0));
+            }];
+            
+            [self.navigationController.view.superview layoutIfNeeded];
         }];
         
         

@@ -10,4 +10,7 @@
 
 @interface BarViewController : UIViewController
 @property(nonatomic,strong)UIView *barView;
+@property(nonatomic,assign)NSInteger selectIndex;
+@property (nonatomic,assign)NSInteger currentIndex;
+
 @end

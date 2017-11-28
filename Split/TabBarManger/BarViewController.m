@@ -16,11 +16,20 @@
 {
     NSUInteger _cout;
 }
-@property(nonatomic,assign)NSInteger selectIndex;
+@property(nonatomic,strong)NSMutableArray *buttons;
 @property(nonatomic,strong)ZJMyButton *selectBtn;
 @end
 
 @implementation BarViewController
+-(instancetype)init{
+    self = [super init];
+    if (self) {
+        //设置选中
+        _selectIndex = 0;
+    }
+    return self;
+}
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
@@ -33,6 +42,15 @@
     _selectIndex = 1;
     [self setUp];
 }
+
+-(void)setSelectIndex:(NSInteger)selectIndex{
+    _selectIndex = selectIndex;
+    if (_selectIndex > 0) {
+        ZJMyButton *btn = _buttons[_selectIndex];
+        [self selectItem:btn];
+    }
+}
+
 
 -(void)setUp{
     
@@ -73,7 +91,10 @@
         make.left.top.and.bottom.equalTo(weakSlef.view);
         make.width.mas_equalTo(@(splitBarW));
     }];
-    NSMutableArray *buttons= [NSMutableArray arrayWithCapacity:titles.count];
+    if (!self.buttons) {
+        NSMutableArray *buttons= [NSMutableArray arrayWithCapacity:titles.count];
+        self.buttons = buttons;
+    }
     for (NSInteger k=0; k<titles.count; k++) {
         ZJMyButton *button = [ZJMyButton buttonWithType:UIButtonTypeCustom];
         button.tag = k;
@@ -95,17 +116,17 @@
         if (button.selected) {
             button.backgroundColor = [UIColor colorWithRed:202/255.0 green:239/25.0 blue:219/255.0 alpha:1.0];
         }
-        [buttons addObject:button];
+        [_buttons addObject:button];
     }
     
     if (_selectIndex > 0) {
-        ZJMyButton *btn = buttons[_selectIndex];
+        ZJMyButton *btn = _buttons[_selectIndex];
         [self selectItem:btn];
     }
     
-    [buttons mas_distributeViewsAlongAxis:MASAxisTypeVertical withFixedSpacing:0 leadSpacing:40 tailSpacing:2*splitBarW];
+    [_buttons mas_distributeViewsAlongAxis:MASAxisTypeVertical withFixedSpacing:0 leadSpacing:40 tailSpacing:2*splitBarW];
    
-    [buttons mas_makeConstraints:^(MASConstraintMaker *make) {
+    [_buttons mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(@0);
         make.trailing.equalTo(@0);
     }];
@@ -163,6 +184,7 @@
     
    NSArray *childViewControllers = self.childViewControllers;
     UIViewController *vc = childViewControllers[_cout - sender.tag - 1];
+    self.currentIndex = _cout - sender.tag - 1;
     [self.view addSubview:vc.view];
     
 }
