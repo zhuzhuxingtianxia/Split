@@ -38,6 +38,34 @@
     // Do any additional setup after loading the view.
 }
 
+//跳转到根视图控制器
+- (void)dismissToRootViewControllerAnimated: (BOOL)flag completion: (void (^ __nullable)(void))completion
+{
+    UIViewController * presentingViewController = self.presentingViewController;
+    while (presentingViewController.presentingViewController) {
+        presentingViewController = presentingViewController.presentingViewController;
+    }
+    [presentingViewController dismissViewControllerAnimated:flag completion:^{
+        completion();
+    }];
+}
+//跳转到指定的控制器
+- (void)dismissToViewController:(NSString *)viewController animated: (BOOL)flag completion: (void (^ __nullable)(void))completion {
+    
+    UIViewController * presentingViewController = self.presentingViewController;
+    do {
+        if ([presentingViewController isKindOfClass:NSClassFromString(viewController)]) {
+            break;
+        }
+        presentingViewController = presentingViewController.presentingViewController;
+        
+    } while (presentingViewController.presentingViewController);
+    
+    [presentingViewController dismissViewControllerAnimated:flag completion:^{
+        completion();
+    }];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
